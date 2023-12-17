@@ -20,9 +20,10 @@ from ILGBoost import DataOrder
 
 class Config:
 
-    def __init__(self,steps: int = 100, gamma: float = 0.5, data_order: DataOrder = DataOrder.RowMajor ):
+    def __init__(self,steps: int = 100, gamma: float = 0.5, data_order: DataOrder = DataOrder.RowMajor, fit_intercept: bool = True):
         self.steps = steps
         self.gamma = gamma
+        self.fit_intercept = fit_intercept
 
         if (type(data_order) == ILGBoost.DataOrder):
             self.data_order = data_order

@@ -10,6 +10,9 @@ pub struct Config {
 
 
     pub data_order: DataOrder,
+
+    
+    pub fit_intercept: bool,
 }
 
 

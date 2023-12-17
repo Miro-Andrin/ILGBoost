@@ -1,5 +1,7 @@
 #![allow(non_snake_case)]
 
+use std::ops::Sub;
+
 use nalgebra::{OMatrix, Dyn, DVector};
 use pyo3::prelude::*;
 
@@ -39,8 +41,17 @@ fn calculate(config: Config, rows: Vec<f64>, response: Vec<f64>) -> PyResult<Opt
 
                 
         
-     DynamicMatrix::from_row_slice(row_count, col_count, &rows);
-    let y = DVector::from_row_slice(&response);
+    DynamicMatrix::from_row_slice(row_count, col_count, &rows);
+    let mut y = DVector::from_row_slice(&response);
+
+    let mut y_mean = 0.0;
+
+    if config.fit_intercept {
+        let len = y.len() as f64;
+     y_mean = y.sum()/len;   
+    }
+
+    y = y.add_scalar(-y_mean);
     
     println!("{data}");
     println!("{y}");
@@ -62,9 +73,9 @@ fn calculate(config: Config, rows: Vec<f64>, response: Vec<f64>) -> PyResult<Opt
 }
 
 
-fn norm(col1: ColumnView, col2: ColumnView){
-    // returns sum(col1[i] * col2[i])
-}
+// fn norm(col1: ColumnView, col2: ColumnView){
+//     // returns sum(col1[i] * col2[i])
+// }
 
 
 /// A Python module implemented in Rust.
