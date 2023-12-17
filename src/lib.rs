@@ -9,6 +9,8 @@ mod config;
 use config::Config;
 use config::DataOrder;
 
+mod model;
+use model::Model;
 
 #[pyfunction]
 fn calculate(config: Config, rows: Vec<f64>, response: Vec<f64>) -> PyResult<Option<Vec<f64>>> {
@@ -48,7 +50,7 @@ fn calculate(config: Config, rows: Vec<f64>, response: Vec<f64>) -> PyResult<Opt
 
     if config.fit_intercept {
         let len = y.len() as f64;
-     y_mean = y.sum()/len;   
+        y_mean = y.sum()/len;   
     }
 
     y = y.add_scalar(-y_mean);
@@ -58,6 +60,8 @@ fn calculate(config: Config, rows: Vec<f64>, response: Vec<f64>) -> PyResult<Opt
     
     // Simple linear regression:
     // beta = (X.T @ X).inv() @ X.T @ y
+    // let mut coef_ = 
+
 
     let beta = (data.transpose() * &data).try_inverse().map(|d| { d * &data.transpose()* y });
 
@@ -72,6 +76,12 @@ fn calculate(config: Config, rows: Vec<f64>, response: Vec<f64>) -> PyResult<Opt
     Ok(Some(result))
 }
 
+#[pyfunction]
+fn make_model(config: Config) ->  PyResult<Model> {
+    let model = Model::new(config);
+    Ok(model)
+} 
+
 
 // fn norm(col1: ColumnView, col2: ColumnView){
 //     // returns sum(col1[i] * col2[i])
@@ -82,6 +92,8 @@ fn calculate(config: Config, rows: Vec<f64>, response: Vec<f64>) -> PyResult<Opt
 #[pymodule]
 fn ILGBoost(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<DataOrder>();
+    m.add_class::<Model>();
     m.add_function(wrap_pyfunction!(calculate, m)?)?;
+    m.add_function(wrap_pyfunction!(make_model, m)?)?;
     Ok(())
 }

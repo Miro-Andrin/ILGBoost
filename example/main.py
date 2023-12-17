@@ -1,7 +1,7 @@
 import ILGBoost
 import numpy as np
 
-from ILGBoost import DataOrder
+from ILGBoost import DataOrder, make_model
 
 
 # class example:
@@ -19,11 +19,12 @@ from ILGBoost import DataOrder
 # predictions = model.predict(X_new)
 
 class Config:
-
-    def __init__(self,steps: int = 100, gamma: float = 0.5, data_order: DataOrder = DataOrder.RowMajor, fit_intercept: bool = True):
+    def __init__(self,steps: int = 100, gamma: float = 0.5, data_order: DataOrder = DataOrder.RowMajor, 
+                 fit_intercept: bool = True, verbose: bool = False):
         self.steps = steps
         self.gamma = gamma
         self.fit_intercept = fit_intercept
+        self.verbose = verbose
 
         if (type(data_order) == ILGBoost.DataOrder):
             self.data_order = data_order
@@ -47,17 +48,20 @@ class Config:
 
 
 config = Config()
+model = make_model(config)
 
 data = [1, 2, 3, 4, 5, 6]
 y = [0,1,2]
-result = ILGBoost.calculate(config, data, y)
-print(result)
+model.fit(data, y)
+model.predict(data)
+# result = ILGBoost.calculate(config, data, y)
+# print(result)
 
-
-# True result
-from numpy.linalg import inv
 data = np.array(data).reshape((len(y),len(data)//len(y)))
-y = np.array(y).reshape(len(y),1)
 
-beta = inv(data.T@data)@data.T@y
-print(f"Actual beta: {beta}")
+# # True result
+# from numpy.linalg import inv
+# y = np.array(y).reshape(len(y),1)
+
+# beta = inv(data.T@data)@data.T@y
+# print(f"Actual beta: {beta}")

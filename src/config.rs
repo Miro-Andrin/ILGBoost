@@ -8,11 +8,14 @@ pub struct Config {
     /// Learning rate (0 to 1)
     pub gamma: f32,
 
-
+    // If the data is supplied in row order or column order
     pub data_order: DataOrder,
 
-    
+    // Fitting intervept or not
     pub fit_intercept: bool,
+
+    // Verbose printing during fitting
+    pub verbose: bool,
 }
 
 
